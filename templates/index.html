@@ -1,0 +1,56 @@
+$def with (search, email)
+
+$code:
+	API_USER = "kialam"
+	API_KEY = "R_27102f40c1594e859fde3399f9bedbc4"
+	b = bitly_api.Connection(API_USER,API_KEY)
+	g = giphypop.Giphy()
+	arguments = search
+	subject = ' '.join(arguments)
+	results = g.translate(arguments)
+	results_url = results.media_url
+
+	def getGif():
+	    b = bitly_api.Connection(API_USER,API_KEY)
+	    bb = b.shorten(str(results_url))
+	    gift = bb['url']
+	    return gift
+	SMTP_SERVER = 'smtp.gmail.com'
+	SMTP_PORT = 587
+	 
+	sender = 'gif@gifmail.me'
+	password = ''
+	recipients = email
+	subject = 'A Gif\'t from Us to You'
+	body = '<h1>Here is your Gif\'t:</h1>'
+	attachment = getGif()
+	body = "" + body + attachment + ""
+	 
+	headers = ["From: " + sender,
+	           "Subject: " + subject,
+	           "To: ".join(recipients),
+	           "MIME-Version: 1.0",
+	           "Content-Type: text/html"]
+	headers = "\r\n".join(headers)
+	 
+	session = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+	 
+	session.ehlo()
+	session.starttls()
+	session.ehlo
+	session.login(sender, password)
+	 
+	session.sendmail(sender, recipients, headers + "\r\n\r\n" + body)
+	session.quit()
+
+$if email:
+	
+	$results
+
+    <p>You searched for: <span style="color: #666; font-size: 14px;">$search</span>. </p>
+    <p>Your email is: <span style="color: #666; font-size: 14px;">$email</span>.</p>
+    <p>Thanks, your gif't is on it's way to your inbox!</p>
+$else:
+    <em>Hello</em>, world!
+	<p>Something went wrong. <a href="hello">Try again</a></p>
+<p><a href="/">Gif Form </a></p>
